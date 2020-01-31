@@ -1,0 +1,299 @@
+//______________________________________________
+//Author: Alex Arriaga							|
+//Program: Programming Assignment #1			|
+//Class: CSCI 2010								|
+//Stores players from a .txt into an array and	|
+//	struct, sorts them based on user input		|
+//______________________________________________|
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+//__________________________
+//Global variables			|
+//__________________________|
+const int PLAYERS_COUNT = 128;
+
+struct Player
+{
+	string fName;
+	string lName;
+	int age;
+	int rank;
+	string country;
+};
+
+//__________________________
+//Function prototypes		|
+//__________________________|
+int loadPlayers(Player players[], int size);
+void displayMenu();
+void findPlayerByName(Player players[], int size);
+void findPlayerByCountry(Player players[], int size);
+void findYoungestPlayer(Player players[], int size);
+void findOldestPlayer(Player players[], int size);
+
+//______________________________________________________
+//Passes initialized array and loads players into it	|
+//______________________________________________________|
+int loadPlayers(Player players[], int size)
+{
+	players[size];
+	int playersLoaded = 0;
+	//Player playerArr[PLAYERS_COUNT];
+	ifstream playersFile("womenSinglesDraw.txt");		//names and opens our .txt file
+	if (!playersFile)
+	{
+		cout << "File not found! Exiting!\n";
+		//return 0;
+	}
+
+	//playersFile >> playerArr[PLAYERS_COUNT];			//super wrong way to do this, wont work
+	
+	for (int i = 0; i < PLAYERS_COUNT; i++)
+	{
+		playersFile >> players[i].fName;
+		playersFile >> players[i].lName;
+		playersFile >> players[i].age;
+		//playersFile.ignore();							//what does this do?
+		playersFile >> players[i].rank;
+		playersFile.ignore();							//used to minimize spacing between rank and country
+		getline(playersFile, players[i].country);		//need getline because country may have a space
+		playersLoaded++;
+	}
+
+	//test loop to ensure everything is pushed into array correctly
+	//for (int i = 0; i < PLAYERS_COUNT - 1; i++)			//weird memory error at end of player array if "-1" not present
+	//{
+	//	cout << playerArr[i].fName << " " << playerArr[i].lName << " " << playerArr[i].age << " " <<
+	//		playerArr[i].rank << " " << playerArr[i].country << endl;
+	//}
+
+	//cout << playerArr[1].fName << " " << playerArr[1].lName;
+	
+	return 0;	
+}
+
+//__________________________________
+//Only displays menu, nothing else	|
+//__________________________________|
+void displayMenu()
+{
+	cout << "Hello! Choose from one of the following options:\n";
+	cout << "1. Find a player by name\n";
+	cout << "2. Find all players from a country\n";
+	cout << "3. Find the youngest player\n";
+	cout << "4. Find the oldest player\n";
+	cout << "5. Exit\n";
+	cout << endl;
+	cout << "Enter choice: ";
+}
+
+//______________________
+//Finds specific player	|
+//______________________|
+void findPlayerByName(Player players[], int size)
+{
+	players[size];
+	string inputFirstName;
+	string inputLastName;
+	bool check = false;
+	
+	cout << "Enter the player's first name: ";
+	cin >> inputFirstName;
+	cout << "Enter the player's last name: ";
+	cin >> inputLastName;
+	cout << endl;
+	for (int i = 0; i < PLAYERS_COUNT;)
+	{
+		while (inputFirstName != players[i].fName && inputLastName != players[i].lName) //inputLastName != players[i].lName)
+		{
+			i++;
+
+			if (inputFirstName == players[i].fName && inputLastName == players[i].lName)
+			{
+				cout << "Player found! Here's the info!\n";
+				cout << players[i].fName << " " << players[i].lName << " " << players[i].age << " " <<
+					players[i].rank << " " << players[i].country << endl;
+				cout << endl;
+				check = true;
+				break;
+			}
+		}
+	}
+
+	if (!check)
+	{
+		cout << "Player doesn't exist, sorry!\n";
+	}
+	
+	//displayMenu();
+}
+
+//__________________________________________
+//Finds all players from a specific country	|
+//__________________________________________|
+void findPlayerByCountry(Player players[], int size)
+{
+	cin.ignore();					//needed to integrate function into main loop
+	players[size];
+	Player sortedArr[PLAYERS_COUNT];
+	string inputCountry;
+	int j = 0;						//counter for sortedArr
+	cout << "Enter the country you wish to find players from: ";
+	getline(cin, inputCountry);		//must use getline for inputs with spaces
+	cout << endl;
+	for (int i = 0; i < PLAYERS_COUNT;)
+	{
+		if (inputCountry.compare(players[i].country) == 0)		//.compare for string values vs bool
+		{
+			sortedArr[j] = players[i];
+			j++, i++;
+		}
+		else
+			i++;
+	}
+
+	if (j == 0)
+	{
+		cout << "Sorry, no players from " << inputCountry << " were found!\n";
+	}
+
+	for (int k = 0; k < j; k++)
+	{
+		cout << sortedArr[k].fName << " " << sortedArr[k].lName << endl;
+	}
+	cout << endl;
+}
+
+//______________________________________
+//Finds youngest player, no user input	|
+//______________________________________|
+void findYoungestPlayer(Player players[], int size)
+{
+	players[size];
+	int minAge = 1000;				//ridiculous value for a human age
+	int iPlayer;					//variable to store the player index
+	for (int i = 0; i < PLAYERS_COUNT; i++)
+	{
+		if (players[i].age <= minAge)
+		{
+			minAge = players[i].age;
+			iPlayer = i;
+		}
+	}
+	//cout << minAge << endl;		//test output
+
+	cout << players[iPlayer].fName << " " << players[iPlayer].lName << " is the youngest player at " << players[iPlayer].age 
+		<< " years old." << endl;	
+	cout << endl;
+}
+
+//______________________________________
+//Finds oldest players, no user input	|
+//Inverse function of findYoungestPlayer|
+//______________________________________|
+void findOldestPlayer(Player players[], int size)
+{
+	players[size];
+	int maxAge = -1;				//impossible value for a human age
+	int iPlayer;					//variable to store the player index
+	for (int i = 0; i < PLAYERS_COUNT; i++)
+	{
+		if (players[i].age >= maxAge)
+		{
+			maxAge = players[i].age;
+			iPlayer = i;
+		}
+	}
+
+	cout << players[iPlayer].fName << " " << players[iPlayer].lName << " is the oldest player at " << players[iPlayer].age
+		<< " years old." << endl;
+	cout << endl;
+}
+
+//Test function for reading files
+void testStream()
+{
+	ifstream googleFile;
+	string testArr[20];
+	ifstream inFile("testFile.txt");
+	if (!inFile)
+	{
+		cout << "Sorry! Test doesn't work!\n";
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		inFile >> testArr[i];
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		cout << testArr[i] << endl;
+	}
+}
+
+int main()
+{
+	Player playerArr[PLAYERS_COUNT];
+	//testStream();										//testing only
+	loadPlayers(playerArr, PLAYERS_COUNT);
+	
+	//testing individual functions
+	/*findPlayerByName(playerArr, PLAYERS_COUNT);
+	findPlayerByCountry(playerArr, PLAYERS_COUNT);
+	findYoungestPlayer(playerArr, PLAYERS_COUNT);
+	findOldestPlayer(playerArr, PLAYERS_COUNT);*/
+	
+	displayMenu();
+	
+	int userInput = 0;
+	cin >> userInput;
+	//verifies userInput is within parameters
+	while (userInput > 0 || userInput < 6)
+	{
+		if (userInput == 1)
+		{
+			findPlayerByName(playerArr, PLAYERS_COUNT);
+			displayMenu();
+			cin >> userInput;
+		}
+		else if (userInput == 2)
+		{
+			findPlayerByCountry(playerArr, PLAYERS_COUNT);
+			displayMenu();
+			cin >> userInput;
+		}
+		else if (userInput == 3)
+		{
+			findYoungestPlayer(playerArr, PLAYERS_COUNT);
+			displayMenu();
+			cin >> userInput;
+		}
+		else if (userInput == 4)
+		{
+			findOldestPlayer(playerArr, PLAYERS_COUNT);
+			displayMenu();
+			cin >> userInput;
+		}
+		else if (userInput == 5)
+		{
+			cout << "Thanks for using Alex's player sort!\n";
+			return 0;
+		}
+		while (userInput < 1 || userInput > 5)
+		{
+			cout << "Invalid input! Try again! ";
+			cin >> userInput;
+		}
+	}
+
+
+	return 0;
+}
+
+
+
