@@ -1,9 +1,9 @@
 //______________________________________________
-//Author: Alex Arriaga							|
-//Program: Programming Assignment #1			|
-//Class: CSCI 2010								|
+//Author: Alex Arriaga				|
+//Program: Programming Assignment #1		|
+//Class: CSCI 2010				|
 //Stores players from a .txt into an array and	|
-//	struct, sorts them based on user input		|
+//	struct, sorts them based on user input	|
 //______________________________________________|
 #include <iostream>
 #include <fstream>
@@ -11,9 +11,9 @@
 #include <sstream>
 using namespace std;
 
-//__________________________
-//Global variables			|
-//__________________________|
+//______________________________
+//Global variables		|
+//______________________________|
 const int PLAYERS_COUNT = 128;
 
 struct Player
